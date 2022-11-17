@@ -1,0 +1,172 @@
+mysql> create table pack_grades(grade_id int not null primary key,grade_name varchar(20),min_price int,max_price int);
+mysql> create table packages(pack_id int primary key, speed int,strt_date date,monthly_payment int,sector_id varchar(5));
+mysql> create table customers(cust_id int primary key, firstname varchar(20),lastname varchar(20),birthdate date,joindate date,city varchar(20),street varchar(20),main_phone int(12),secondary_phn int(12),fax varchar(20),monthly_discount int,pack_id int);
+mysql> create table sectors(sector_id varchar(5) primary key,sector_name varchar(20));
+mysql> desc pack_grades;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| grade_id   | int         | NO   | PRI | NULL    |       |
+| grade_name | varchar(20) | YES  |     | NULL    |       |
+| min_price  | int         | YES  |     | NULL    |       |
+| max_price  | int         | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+
+mysql> insert into pack_grades values (1,"Aaa",20,100), (2,"bbb",40,200);
+mysql> insert into pack_grades values (3,"ccc",30,300), (4,"ddd",50,500),(5,"eee",60,700),(6,"fff",56,345);
+mysql> desc packages;
++-----------------+------------+------+-----+---------+-------+
+| Field           | Type       | Null | Key | Default | Extra |
++-----------------+------------+------+-----+---------+-------+
+| pack_id         | int        | NO   | PRI | NULL    |       |
+| speed           | int        | YES  |     | NULL    |       |
+| strt_date       | date       | YES  |     | NULL    |       |
+| monthly_payment | int        | YES  |     | NULL    |       |
+| sector_id       | varchar(5) | YES  |     | NULL    |       |
++-----------------+------------+------+-----+---------+-------+
+
+mysql> insert into packages values (1,60,"2021-11-21",5000,"1A"),(2,50,"2021-11-11",6000,"2A"),(3,55,"2021-10-11",6500,"3A"),(4,45,"2021-09-11",5500,"4A");
+mysql> desc customers;
++------------------+-------------+------+-----+---------+-------+
+| Field            | Type        | Null | Key | Default | Extra |
++------------------+-------------+------+-----+---------+-------+
+| cust_id          | int         | NO   | PRI | NULL    |       |
+| firstname        | varchar(20) | YES  |     | NULL    |       |
+| lastname         | varchar(20) | YES  |     | NULL    |       |
+| birthdate        | date        | YES  |     | NULL    |       |
+| joindate         | date        | YES  |     | NULL    |       |
+| city             | varchar(20) | YES  |     | NULL    |       |
+| street           | varchar(20) | YES  |     | NULL    |       |
+| main_phone       | int         | YES  |     | NULL    |       |
+| secondary_phn    | int         | YES  |     | NULL    |       |
+| fax              | varchar(20) | YES  |     | NULL    |       |
+| monthly_discount | int         | YES  |     | NULL    |       |
+| pack_id          | int         | YES  |     | NULL    |       |
++------------------+-------------+------+-----+---------+-------+
+mysql> insert into customers values(1," Raj ","Singh","2001-11-20","2021-11-20","Mau","123A",75186910,97931212,"1ADF234",500,1), (2,"Amit","Kanase","2001-11-04","2020-09-11","Satara","234B",80102903,89991904,"3BHG324",600,2), (3,"Amatya","Shekhar","2001-01-24","2021-06-11","vaishali","546C",91991369,62013544,"5ABG657",550,3), (4,"Avnish","Prajapat","2001-06-22","2021-08-09","Ratangarh","786D",74009362,80775769,"7UHG897",450,4);
+
+mysql> desc sectors;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| sector_id   | varchar(5)  | NO   | PRI | NULL    |       |
+| sector_name | varchar(20) | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+
+mysql> insert into sectors values ("1A","Singh"),("2A","Kanase"),("3A","Shekhar"),("4A","Prajapat");
+
+mysql> select customers.firstname,customers.lastname,packages.pack_id,packages.speed from customers inner join packages on customers.pack_id=packages.pack_id;
++-----------+----------+---------+-------+
+| firstname | lastname | pack_id | speed |
++-----------+----------+---------+-------+
+| Raj       | Singh    |       1 |    60 |
+| Amit      | Kanase   |       2 |    50 |
+| Amatya    | Shekhar  |       3 |    55 |
+| Avnish    | Prajapat |       4 |    45 |
++-----------+----------+---------+-------+
+
+mysql> select customers.firstname,customers.lastname,packages.pack_id,packages.speed from customers inner join packages on customers.pack_id=packages.pack_id && customers.pack_id=1 or customers.pack_id=2 order by firstname asc;
++-----------+----------+---------+-------+
+| firstname | lastname | pack_id | speed |
++-----------+----------+---------+-------+
+| Amit      | Kanase   |       1 |    60 |
+| Amit      | Kanase   |       2 |    50 |
+| Amit      | Kanase   |       3 |    55 |
+| Amit      | Kanase   |       4 |    45 |
+| Raj       | Singh    |       1 |    60 |
++-----------+----------+---------+-------+
+mysql> select customers.firstname,customers.lastname,packages.pack_id,packages.speed from customers inner join packages on customers.pack_id=packages.pack_id && (packages.pack_id=1 or packages.pack_id=2) order by firstname asc;
++-----------+----------+---------+-------+
+| firstname | lastname | pack_id | speed |
++-----------+----------+---------+-------+
+| Amit      | Kanase   |       2 |    50 |
+| Raj       | Singh    |       1 |    60 |
++-----------+----------+---------+-------+
+mysql> select customers.firstname,customers.lastname,packages.pack_id,packages.speed,packages.monthly_payment,sectors.sector_name from ((packages inner join customers on customers.pack_id=packages.pack_id) inner join sectors on packages.sector_id=sectors.sector_id);
++-----------+----------+---------+-------+-----------------+-------------+
+| firstname | lastname | pack_id | speed | monthly_payment | sector_name |
++-----------+----------+---------+-------+-----------------+-------------+
+| Raj       | Singh    |       1 |    60 |            5000 | Singh       |
+| Amit      | Kanase   |       2 |    50 |            6000 | Kanase      |
+| Amatya    | Shekhar  |       3 |    55 |            6500 | Shekhar     |
+| Avnish    | Prajapat |       4 |    45 |            5500 | Prajapat    |
++-----------+----------+---------+-------+-----------------+-------------+
+mysql> select customers.firstname,customers.lastname,packages.pack_id,packages.speed,packages.monthly_payment,sectors.sector_name from ((packages inner join customers on customers.pack_id=packages.pack_id) inner join sectors on packages.sector_id=sectors.sector_id) where sectors.sector_name="Singh";
++-----------+----------+---------+-------+-----------------+-------------+
+| firstname | lastname | pack_id | speed | monthly_payment | sector_name |
++-----------+----------+---------+-------+-----------------+-------------+
+| Raj       | Singh    |       1 |    60 |            5000 | Singh       |
++-----------+----------+---------+-------+-----------------+-------------+
+mysql> select customers.firstname,customers.lastname,packages.pack_id,packages.speed,packages.monthly_payment,sectors.sector_name from ((packages inner join customers on customers.pack_id=packages.pack_id) inner join sectors on packages.sector_id=sectors.sector_id) where sectors.sector_name="Singh" && year(customers.joindate)=2021;
++-----------+----------+---------+-------+-----------------+-------------+
+| firstname | lastname | pack_id | speed | monthly_payment | sector_name |
++-----------+----------+---------+-------+-----------------+-------------+
+| Raj       | Singh    |       1 |    60 |            5000 | Singh       |
++-----------+----------+---------+-------+-----------------+-------------+
+mysql> select packages.pack_id,packages.speed,packages.monthly_payment,pack_grades.grade_name from packages inner join pack_grades on packages.monthly_payment between pack_grades.min_price and pack_grades.max_price;
++---------+-------+-----------------+------------+
+| pack_id | speed | monthly_payment | grade_name |
++---------+-------+-----------------+------------+
+|       1 |    60 |            5000 | ccc        |
++---------+-------+-----------------+------------+
+mysql> select customers.firstname,customers.lastname,packages.speed,packages.monthly_payment from customers right outer join packages on customers.pack_id=packages.pack_id;
++-----------+----------+-------+-----------------+
+| firstname | lastname | speed | monthly_payment |
++-----------+----------+-------+-----------------+
+| Raj       | Singh    |    60 |            5000 |
+| Amit      | Kanase   |    50 |            6000 |
+| Amatya    | Shekhar  |    55 |            6500 |
+| Avnish    | Prajapat |    45 |            5500 |
++-----------+----------+-------+-----------------+
+mysql> select customers.firstname,customers.lastname,packages.speed,packages.monthly_payment from customers left outer join packages on customers.pack_id=packages.pack_id;
++-----------+----------+-------+-----------------+
+| firstname | lastname | speed | monthly_payment |
++-----------+----------+-------+-----------------+
+| Raj       | Singh    |    60 |            5000 |
+| Amit      | Kanase   |    50 |            6000 |
+| Amatya    | Shekhar  |    55 |            6500 |
+| Avnish    | Prajapat |    45 |            5500 |
++-----------+----------+-------+-----------------+
+mysql> select customers.firstname,customers.lastname,packages.speed,packages.monthly_payment from customers left outer join packages on customers.pack_id=packages.pack_id;
++-----------+----------+-------+-----------------+
+| firstname | lastname | speed | monthly_payment |
++-----------+----------+-------+-----------------+
+| Raj       | Singh    |    60 |            5000 |
+| Amit      | Kanase   |    50 |            6000 |
+| Amatya    | Shekhar  |    55 |            6500 |
+| Avnish    | Prajapat |    45 |            5500 |
+| Saurabh   | Joshi    |  NULL |            NULL |
++-----------+----------+-------+-----------------+
+mysql> select customers.firstname,customers.lastname,packages.speed,packages.monthly_payment from customers right outer join packages on customers.pack_id=packages.pack_id union select customers.firstname,customers.lastname,packages.speed,packages.monthly_payment from customers left outer join packages on packages.pack_id = customers.pack_id;
++-----------+----------+-------+-----------------+
+| firstname | lastname | speed | monthly_payment |
++-----------+----------+-------+-----------------+
+| Raj       | Singh    |    60 |            5000 |
+| Amit      | Kanase   |    50 |            6000 |
+| Amatya    | Shekhar  |    55 |            6500 |
+| Avnish    | Prajapat |    45 |            5500 |
+| NULL      | NULL     |    34 |            3500 |
+| NULL      | NULL     |  NULL |            NULL |
+| Saurabh   | Joshi    |  NULL |            NULL |
++-----------+----------+-------+-----------------+
+mysql> select A.firstname,A.lastname,A.pack_id from customers A join customers B on A.pack_id = B.pack_id and B.lastname="Singh";
++-----------+----------+---------+
+| firstname | lastname | pack_id |
++-----------+----------+---------+
+| Raj       | Singh    |       1 |
++-----------+----------+---------+
+mysql> select A.firstname,A.lastname,A.monthly_discount from customers A join customers B on B.cust_id=2 and A.monthly_discount<B.monthly_discount;
++-----------+----------+------------------+
+| firstname | lastname | monthly_discount |
++-----------+----------+------------------+
+| Raj       | Singh    |              500 |
+| Amatya    | Shekhar  |              550 |
+| Avnish    | Prajapat |              450 |
++-----------+----------+------------------+
+mysql> select A.pack_id,A.speed from packages A join packages B on B.pack_id=2 and A.speed<B.speed;
++---------+-------+
+| pack_id | speed |
++---------+-------+
+|       4 |    45 |
+|       5 |    34 |
++---------+-------+
