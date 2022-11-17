@@ -1,0 +1,117 @@
+mysql> create table Stud_Marks(Roll int primary key, name varchar(30), marks int);
+mysql> insert into Stud_Marks values(1, 'ABC', 1000);
+mysql> insert into Stud_Marks values(2, 'BCD', 850);
+mysql> insert into Stud_Marks values(3, 'CDE', 950);
+mysql> insert into Stud_Marks values(4, 'DEF', 1150);
+mysql> delimiter $$
+mysql> create procedure proc_Grade(in marks int, out class varchar(30))
+    -> begin
+    -> if marks<=1500 and marks>=990 then set class='Distinction';
+    -> end if;
+    -> if marks<=989 and marks>=900 then set class='First';
+    -> end if;
+    -> if marks<=899 and marks>=825 then set class='Second';
+    -> end if;
+    -> end;
+    -> $$
+
+mysql> select *from Stud_Marks;
+    -> $$
++------+------+-------+
+| Roll | name | marks |
++------+------+-------+
+|    1 | ABC  |  1000 |
+|    2 | BCD  |   850 |
+|    3 | CDE  |   950 |
+|    4 | DEF  |  1150 |
++------+------+-------+
+mysql> create function find_result(roll_in int) returns int deterministic
+    -> begin
+    -> declare fmarks int;
+    -> declare grade varchar(30);
+    -> declare stud_name varchar(30);
+    -> select Stud_Marks.marks, Stud_Marks.name into fmarks, stud_name from Stud_Marks where Stud_Marks.Roll = roll_in;
+    -> call proc_Grade(fmarks, @grade);
+    -> insert into Result values(roll_in, stud_name, @grade);
+    -> return roll_in;
+    -> end;
+    -> $$
+mysql> select find_result(4) $$
++----------------+
+| find_result(4) |
++----------------+
+|              4 |
++----------------+
+mysql> select * from Result $$
++------+------+-------------+
+| Roll | Name | class       |
++------+------+-------------+
+|    4 | DEF  | Distinction |
++------+------+-------------+
+1 row in set (0.00 sec)
+
+mysql> select find_result(1) $$
++----------------+
+| find_result(1) |
++----------------+
+|              1 |
++----------------+
+1 row in set (0.15 sec)
+
+mysql> select * from Result $$
++------+------+-------------+
+| Roll | Name | class       |
++------+------+-------------+
+|    4 | DEF  | Distinction |
+|    1 | ABC  | Distinction |
++------+------+-------------+
+2 rows in set (0.00 sec)
+
+mysql> select find_result(2) $$
++----------------+
+| find_result(2) |
++----------------+
+|              2 |
++----------------+
+1 row in set (0.08 sec)
+
+mysql> select * from Result $$
++------+------+-------------+
+| Roll | Name | class       |
++------+------+-------------+
+|    4 | DEF  | Distinction |
+|    1 | ABC  | Distinction |
+|    2 | BCD  | Second      |
++------+------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> select find_result(3) $$
++----------------+
+| find_result(3) |
++----------------+
+|              3 |
++----------------+
+1 row in set (0.08 sec)
+
+mysql> select * from Result $$
++------+------+-------------+
+| Roll | Name | class       |
++------+------+-------------+
+|    4 | DEF  | Distinction |
+|    1 | ABC  | Distinction |
+|    2 | BCD  | Second      |
+|    3 | CDE  | First       |
++------+------+-------------+
+4 rows in set (0.00 sec)
+
+mysql> select * from Result $$
++------+------+-------------+
+| Roll | Name | class       |
++------+------+-------------+
+|    4 | DEF  | Distinction |
+|    1 | ABC  | Distinction |
+|    2 | BCD  | Second      |
+|    3 | CDE  | First       |
++------+------+-------------+
+4 rows in set (0.00 sec)
+
