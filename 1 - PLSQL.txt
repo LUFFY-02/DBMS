@@ -1,0 +1,35 @@
+PROCEDURE :
+	DROP PROCEDURE IF EXISTS name//
+	CREATE PROCEDURE name (IN/OUT/IN OUT para_name type)
+	BEGIN
+	--executable code
+	END
+	//
+
+FUNCTIONS :
+	CREATE FUNCTION name(PARAMETERS) RETURN type
+	--declaration part
+	BEGIN
+	--code
+	RETURN variable;
+	END
+	//
+
+CURSORS : (%rowcount, %found, %notfound, %ispoen
+	DECLARE cur_name CURSOR FOR select *from temp where ___;
+	OPEN cur_name;
+	FETCH cur_name INTO var1,var2;
+	CLOSE cur_name;
+
+TRIGGER :
+	CREATE TRIGGER name
+	BEFORE/AFTER/INSTEAD OF
+	INSERT/UPDATE/DELETE
+	OF col_name (optional)
+	ON table_name
+	FOR EACH ROW
+	BEGIN
+	--INSERT INTO ___  ( NEW for AFTER , OLD for BEFORE )
+	--SELECT *FROM ___
+	END
+	//

@@ -1,0 +1,84 @@
+CREATE:
+	create table temp();
+
+INSERT:
+	insert into temp values (),(),();
+
+UPDATE:
+	update temp set marks='84' where name='Raj';
+
+KEYS: ****
+	create table(int roll,____,primary key(roll));
+	___,primary key(fname,lname);
+	___,CONSTRAINT details primary key(fname,lname);
+
+	foreign key(seat_no) references OTHER_TABLE_NAME(seat_no);
+
+ALTER:
+	alter table temp add column Grade varchar(20);
+	alter table temp drop column Grade;
+
+DELETE:
+	delete from temp where marks<0;
+	delete from raj;
+
+CLAUSES:
+	select name from temp order by id desc;
+	select SUM(marks),name from temp group by name;
+	select SUM(marks),name from temp group by name having name IN('Raj','Sunil');
+
+OPERATORS:
+	select name,roll from temp where marks<12 AND marks>0;
+	__ OR __
+	WHERE NOT name='Sunil';
+
+STRING OPERATIONS:
+	where name like 'A%' 'a%d' '__j' '__j%'
+
+IN-BUILT FUNCTIONS:
+	select name,marks from temp where marks between 10 AND 40;
+	select concat(fname,lname) as 'NAME' from temp;
+
+	NOT NULL/UNQIUE/CHECK(marks>0)  -> while making table
+
+SETS :	UNION INTERSECT EXCEPT
+	select *from temp UNION select *from temp2;
+	should have same type of columns
+
+SUBQUERY :
+	select name from stud where sid in (select sid from details where city='Pune');
+
+JOIN :	INNER LEFT RIGHT FULL JOIN 
+	select *from table1 INNER JOIN table2 ON table1.id=table2.id;
+ 
+VIEWS :
+	create view view_1 AS
+	select *from temp where marks>0;
+
+	update view_1 set name='Rajvardhan' where name='Raj';
+
+	drop view name;
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

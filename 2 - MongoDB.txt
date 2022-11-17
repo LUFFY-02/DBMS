@@ -1,0 +1,72 @@
+CREATE :
+use 7348_Practical;
+db.createCollection('Students');
+
+INSERT :
+db.students.insert({});
+db.students.insertMany([ {},{} ]);
+var xyz= [ {}, {}, {} ]
+db.students.insert( xyz );
+
+INDEX :
+db.students.createIndex( {name:1}, {name:"Student's Names} ) 
+db.students.getIndexes()
+
+FIND :
+db.students.find().pretty();
+db.students.find( {name:{$eq:'Raj}} );
+db.students.find( {name:'Raj'} );
+db.students.find( {or: [ {name:'Raj'}, {name:'Sunil'} ] } );
+db.students.find( {and: [ {name:'Raj'}, {price: {$lte:100} } ] } ); 	errors then use ([ ])
+
+DELETE :
+db.students.remove( {name:'Raj'} );
+db.students.remove( {name:'Raj'} ,1);
+db.students.deleteOne( {} );
+db.students.deleteMany( {} );
+
+UPDATE :
+db.students.update( {name:'Raj'}, {$set : {name:'Rajvardhan'} );
+db.students.update( {name:'Raj'}, {$set : {name:'Rajvardhan'}, {multi:true} );
+
+SORT :
+db.students.find().sort( {name:1} );
+db.students.find().sort( {name:-1} );
+
+AGGREGATE :
+SUM, AVG, MIN, MAX, FIRST, LAST, LIMIT, SORT, SKIP(skips 1st), LIMIT, PROJECT
+
+db.students.aggregate([ {$match : {status:'A'} }, {$group: { _id:'$name', SUM: {$sum:'$price'} } } ]); -- [] maybe,maybe not
+
+db.students.aggregate([ {$sort : {_id:'A'} }, {$group: { _id:'$name', SUM: {$sum:'$price'} } } ]);
+
+db.students.aggregate([ {$match: {status:'A'} }, {$project: {Amount:1,_id:0} } ]);
+
+AGGREGATION :
+
+db.students.mapReduce(
+	function() {emit(this.name,this.amount);},
+	function(key,value) { return Array.sum(amount); },
+	{out:'Ans'}
+);
+db.Ans.find();
+
+
+db.students.mapReduce(
+	function() {
+		for(var i in this.items) {
+			emit(this.items[i].sku,this.items[i].price);
+		}
+	function(key,value) { return Array.sum(value); },
+	{out : 'Result'}
+)
+
+
+
+
+
+
+
+
+
+
